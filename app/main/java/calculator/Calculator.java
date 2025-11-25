@@ -18,7 +18,7 @@ public class Calculator {
 				return root( getParams()[0], getParams()[1]);
 			}
 			private double root( double a, double b ) {
-				double tolerance = 0.001;
+				double tolerance = 0.0001;
 				double scale = 1;
 				double r = 1;
 				if ( r > b ) {
@@ -88,14 +88,23 @@ public class Calculator {
 	}
 
 	public static String removeDotIfJustZero( String num ) {
-		try {                   
+		try { 
 			double val = Double.parseDouble(num);
-			String s = String.format("%.2f", val );
-			if ( s.substring( s.lastIndexOf('.') ).equals(".00") ) {
-				return s.substring(0,  s.lastIndexOf('.') );
+			String s = String.format("%.3f", val );
+			int rightZeroCount = 0;
+			for ( int i = s.length() - 1; i > 0; i-- ) {
+				if ( s.charAt(i) == '0' || s.charAt(i) == '.') {
+					rightZeroCount++;
+				} else {
+					break;
+				}
+			} 
+			if ( rightZeroCount != 0 ) {
+				return s.substring(0, s.length() - rightZeroCount );			
 			}
 			return s;
-		} catch( Exception e) {	}
+			
+		} catch( Exception e) { }
 		return num;
 	}
 	
