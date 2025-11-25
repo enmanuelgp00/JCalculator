@@ -66,10 +66,12 @@ public class Calculator {
 		try {                   
 			double val = Double.parseDouble(num);
 			String s = String.format("%.2f", val );
+			System.out.println(s);
 			if ( s.substring( s.lastIndexOf('.') ).equals(".00") ) {
 				return s.substring(0,  s.lastIndexOf('.') );
 			}
-		} catch( Exception e) {}
+			return s;
+		} catch( Exception e) {	}
 		return num;
 	}
 	
@@ -80,13 +82,10 @@ public class Calculator {
 		Evaluation evaluation = new Evaluation( evaluationInput );  
 		evaluation.content().print();
 		if ( evaluation.hasParentesis() ) {
-			System.out.println("has parentesis");
 			Evaluation.Content valuesInside = evaluation.getEvaluationInsideParentesis();
-			valuesInside.print();
 			evaluation.replaceEvaluationInsideParentesis( compute( valuesInside ) );
 		}
-		if ( evaluation.content().values.size() > 1 ) {           
-			evaluation.content().print();
+		if ( evaluation.content().values.size() > 1 ) {     
 			return compute( evaluation.nextAlgorithm() );
 		}
 		return removeDotIfJustZero(evaluation.content().values.get(0));
@@ -137,7 +136,6 @@ public class Calculator {
 				String content = input.values.stream().collect( Collectors.joining(""));
 				for ( int i = content.indexOf("(") + 1; i < content.length(); i++  ) {
 					ch = content.charAt(i);
-					System.out.println( ch + " " + i );
 					if ( ch == '(') {
 						v++;
 					} else if ( ch == ')') {
@@ -219,13 +217,9 @@ public class Calculator {
 			int lastParentesisIndex = -1;
 			for ( int i = 0; i < input.length(); i++ ) {
 				
-				System.out.println( input );
 				ch = input.charAt(i);
 				
 				if ( i >= firstParentesisIndex ) {
-					System.out.println("firstParentesisIndex " + firstParentesisIndex );
-					System.out.println("lastParentesisIndex " + lastParentesisIndex );
-					System.out.println("v " + v );
 					if ( ch == '(') {
 						v++;
 					} else if ( ch == ')') {
@@ -233,17 +227,14 @@ public class Calculator {
 							v++;
 						}
 						if ( --v == 0 && lastParentesisIndex == -1 ) { 
-							System.out.println("lastParentesisIndex " + i);
 							lastParentesisIndex = i;
 						}
 					}              
-					System.out.println( firstParentesisIndex + " " + lastParentesisIndex );
 				}
 				
 				if ( Character.isDigit(ch) || ch == '.') {
 					token.append(ch);                     
 					if ( i == input.length() - 1 ) {
-						System.out.println(token.toString());
 						values.add(token.toString());
 					}
 					

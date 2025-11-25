@@ -20,7 +20,7 @@ public class MainPanel extends JPanel {
 		setBorder( padding );
 		int WIDTH = 3;
 		final String backspaceChar = "«";
-		
+		final String STANBY = "<";
 		this.calculator = calculator;
 		
 		String[] buttonStrs = new String[] {
@@ -37,13 +37,13 @@ public class MainPanel extends JPanel {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = WIDTH + 1;
-		JLabel label = new JLabel("0");
+		JLabel label = new JLabel(STANBY);
 		label.setHorizontalAlignment( SwingConstants.RIGHT );
 		label.setFont( font );
 		add( label, gbc ); 
 			
 		gbc.gridy = 1;
-		JLabel result = new JLabel("0");                     
+		JLabel result = new JLabel(STANBY);                     
 		result.setHorizontalAlignment( SwingConstants.RIGHT );
 		result.setFont( font );
 		add( result, gbc );
@@ -124,18 +124,18 @@ public class MainPanel extends JPanel {
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
 							case "©":
-								label.setText("0");
+								label.setText(STANBY);
 							break;
 							case backspaceChar:
 								String content = label.getText().substring(0, label.getText().length() - 1 );
 								if ( content.equals("")) {
-									content = "0";
+									content = STANBY;
 								}
 								label.setText(content);
 							break;
 							default:
 								content = label.getText();
-								if ( content.equals("0")) {
+								if ( content.equals(STANBY)) {
 									content = "";
 								}
 								label.setText( content + button.getText() );
@@ -146,7 +146,7 @@ public class MainPanel extends JPanel {
 							Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( label.getText() );
 							result.setText(calculator.compute( content ));
 						} catch( Exception e ) {
-							result.setText("0");
+							result.setText(STANBY);
 						}
 						
 				}
