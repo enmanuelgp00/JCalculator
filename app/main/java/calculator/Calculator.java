@@ -9,13 +9,38 @@ import java.util.Scanner;
 public class Calculator {
 	String input;
 	Evaluation.Content evaluationInput;
-	
 	static Operator[] OPERATORS = new Operator[] {
+		new Operator('√') {
+			
+			
+			@Override
+			double evaluate() {
+				return root( getParams()[0], getParams()[1]);
+			}
+			private double root( double a, double b ) {
+				double tolerance = 0.001;
+				double scale = 1;
+				double r = 1;
+				if ( r > b ) {
+					r = tolerance;
+					scale = tolerance;
+				}
+				double root;
+				while ( ( root = Math.pow( r, a )) < b ) {  
+					if ( ( Math.pow(r + scale, a ) ) > b ) {
+						r += tolerance;
+					} else {
+						r += scale;					
+					}
+				}
+				return  r;	
+			}
+		},
 		new Operator('^') {
 			@Override
 			double evaluate() {
 				
-				return Math.pow(getParams()[0], getParams()[1]);
+				return Math.pow( getParams()[0], getParams()[1]);
 			}
 		},
 		new Operator('*') {
@@ -87,7 +112,7 @@ public class Calculator {
 		if ( evaluation.content().values.size() > 1 ) {     
 			return compute( evaluation.nextAlgorithm() );
 		}
-		return removeDotIfJustZero(evaluation.content().values.get(0));
+		return evaluation.content().values.get(0);
 	}
 	
 	
@@ -328,6 +353,8 @@ public class Calculator {
 		abstract double evaluate();
 		
 	}
+	
+	
 	
 	public static void main( String[] args ) {
 		new CalculatorFrame( new Calculator() );

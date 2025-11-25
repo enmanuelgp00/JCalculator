@@ -30,7 +30,7 @@ public class MainPanel extends JPanel {
 		this.calculator = calculator;
 		
 		String[] buttonStrs = new String[] {
-			"©","(",")","^",
+			"(",")","√","^",
 			"1","2","3","*",
 			"4","5","6","/",
 			"7","8","9","-",
@@ -164,9 +164,6 @@ public class MainPanel extends JPanel {
 				@Override
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
-							case "©":
-								textfield.setText(STANBY);
-							break;
 							case backspaceChar:
 								String content = textfield.getText();
 								StringBuilder newcontent = new StringBuilder();
@@ -218,7 +215,7 @@ public class MainPanel extends JPanel {
 		return ch == '(' || ch == ')';
 	}
 	void write( char ch ) {
-		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) ) {
+		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) || ch == '.') {
 			try {
 				if ( textfield.getSelectionStart() != textfield.getSelectionEnd() ) {
 					textfield.replaceSelection( String.valueOf(ch));
@@ -232,7 +229,7 @@ public class MainPanel extends JPanel {
 		
 		try {
 			Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
-			result.setText(calculator.compute( content ));
+			result.setText(  Calculator.removeDotIfJustZero(calculator.compute( content )));
 		} catch( Exception e ) {
 			result.setText(STANBY);
 		}
