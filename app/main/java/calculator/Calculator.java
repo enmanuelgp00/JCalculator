@@ -63,12 +63,13 @@ public class Calculator {
 	}
 
 	public static String removeDotIfJustZero( String num ) {
-		int lastIndex;
-		if  (( lastIndex = num.lastIndexOf('.')) != -1 ) {		
-			if ( num.substring( lastIndex ).equals(".0") ) {
-				return num.substring(0, num.lastIndexOf('.') );
-			}	
-		}
+		try {                   
+			double val = Double.parseDouble(num);
+			String s = String.format("%.2f", val );
+			if ( s.substring( s.lastIndexOf('.') ).equals(".00") ) {
+				return s.substring(0,  s.lastIndexOf('.') );
+			}
+		} catch( Exception e) {}
 		return num;
 	}
 	

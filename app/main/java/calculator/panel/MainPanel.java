@@ -17,16 +17,16 @@ public class MainPanel extends JPanel {
 		Border padding = BorderFactory.createEmptyBorder( 4, 4, 4, 4 );
 		setBorder( padding );
 		int WIDTH = 3;
-		
+		final String backspaceChar = "«";
 		
 		this.calculator = calculator;
 		
 		String[] buttonStrs = new String[] {
-			"C","(",")","^",
+			"©","(",")","^",
 			"1","2","3","*",
 			"4","5","6","/",
 			"7","8","9","-",
-			"<","0",".","+"
+			backspaceChar,"0",".","+"
 		};
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -56,10 +56,10 @@ public class MainPanel extends JPanel {
 				@Override
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
-							case "C":
+							case "©":
 								label.setText("0");
 							break;
-							case "<":
+							case backspaceChar:
 								String content = label.getText().substring(0, label.getText().length() - 1 );
 								if ( content.equals("")) {
 									content = "0";
