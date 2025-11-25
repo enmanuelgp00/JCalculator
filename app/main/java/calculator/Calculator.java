@@ -221,7 +221,7 @@ public class Calculator {
 				System.out.println( input );
 				ch = input.charAt(i);
 				
-				if ( i >= firstParentesisIndex && lastParentesisIndex == -1 ) {
+				if ( i >= firstParentesisIndex ) {
 					System.out.println("firstParentesisIndex " + firstParentesisIndex );
 					System.out.println("lastParentesisIndex " + lastParentesisIndex );
 					System.out.println("v " + v );
@@ -231,7 +231,7 @@ public class Calculator {
 						if ( firstParentesisIndex == -1 ) {
 							v++;
 						}
-						if ( --v == 0 ) { 
+						if ( --v == 0 && lastParentesisIndex == -1 ) { 
 							System.out.println("lastParentesisIndex " + i);
 							lastParentesisIndex = i;
 						}
@@ -287,6 +287,10 @@ public class Calculator {
 			
 			if ( firstParentesisIndex == -1 && lastParentesisIndex != -1 ) { 
 				throw new Exception();
+			}
+			
+			if ( v != 0 ) {  
+				throw new Exception();				
 			}
 			
 		}
