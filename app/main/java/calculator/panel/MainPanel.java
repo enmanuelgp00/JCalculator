@@ -171,14 +171,30 @@ public class MainPanel extends JPanel {
 								String content = textfield.getText();
 								StringBuilder newcontent = new StringBuilder();
 								int index = textfield.getCaretPosition() - 1;
+								int start = textfield.getSelectionStart();
+								int end = textfield.getSelectionEnd();
+								
 								for ( int i = 0; i < content.length(); i++) {
-									if ( i != index ) {
-										newcontent.append( content.charAt(i));
+									if ( start != end ) {
+										if ( i < start || i > end ) {  
+											newcontent.append( content.charAt(i));											
+										}
+									} else {									
+										if ( i != index ) {
+											newcontent.append( content.charAt(i));
+										}
 									}
 								}
 								textfield.setText(newcontent.toString());
-								if ( index > -1 ) {
-									textfield.setCaretPosition(index);								
+								if ( start != end ) {
+									if ( start > -1 ) {
+										textfield.setCaretPosition( start );									
+									}
+								} else {
+
+									if ( index > -1 ) {
+										textfield.setCaretPosition(index);								
+									}								
 								}
 							break;
 							default:
@@ -203,8 +219,12 @@ public class MainPanel extends JPanel {
 	}
 	void write( char ch ) {
 		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) ) {
-			try {                      
-				textfield.getDocument().insertString( textfield.getCaretPosition(), String.valueOf(ch), null );			
+			try {
+				if ( textfield.getSelectionStart() != textfield.getSelectionEnd() ) {
+					textfield.replaceSelection( String.valueOf(ch));
+				} else {
+					textfield.getDocument().insertString( textfield.getCaretPosition(), String.valueOf(ch), null );							
+				}
 			} catch ( Exception e ) { }
 		}
 	}
