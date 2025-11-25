@@ -66,7 +66,6 @@ public class Calculator {
 		try {                   
 			double val = Double.parseDouble(num);
 			String s = String.format("%.2f", val );
-			System.out.println(s);
 			if ( s.substring( s.lastIndexOf('.') ).equals(".00") ) {
 				return s.substring(0,  s.lastIndexOf('.') );
 			}
@@ -293,18 +292,20 @@ public class Calculator {
 				System.out.print("["+removeDotIfJustZero(s)+"]");
 			}
 		}
-		boolean isOperator( char ch ) {
-			for ( Operator op : OPERATORS ) {
-				if ( ch == op.symbol ) {
-					return true;
-				}
+		
+		
+		
+		}
+	}
+	
+	
+	public static boolean isOperator( char ch ) {
+		for ( Operator op : OPERATORS ) {
+			if ( ch == op.symbol ) {
+				return true;
 			}
-			return false;
 		}
-		
-		
-		
-		}
+		return false;
 	}
 	
 	static abstract class Operator {

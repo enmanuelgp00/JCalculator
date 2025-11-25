@@ -2,6 +2,7 @@ package calculator.panel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;    
@@ -13,14 +14,19 @@ import calculator.Calculator;
 
 public class MainPanel extends JPanel {
 	Calculator calculator;
+	JLabel result;
+	JTextField textfield;
+	int caretPosition;
+	int WIDTH = 3;
+	final String backspaceChar = "«";
+	final String STANBY = " ";
+	
+	
 	public MainPanel( Calculator calculator ) {
 		super(  new GridBagLayout());
-		Font font = new Font("Courier New", Font.PLAIN, 20);
+		Font font = new Font("Courier New", Font.PLAIN, 24);
 		Border padding = BorderFactory.createEmptyBorder( 4, 4, 4, 4 );
 		setBorder( padding );
-		int WIDTH = 3;
-		final String backspaceChar = "«";
-		final String STANBY = "<";
 		this.calculator = calculator;
 		
 		String[] buttonStrs = new String[] {
@@ -37,19 +43,54 @@ public class MainPanel extends JPanel {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = WIDTH + 1;
-		JLabel label = new JLabel(STANBY);
-		label.setHorizontalAlignment( SwingConstants.RIGHT );
-		label.setFont( font );
-		add( label, gbc ); 
+		textfield = new JTextField() {
+			{
+				//setOpaque(false);
+				//setCaretColor( Color.BLACK );
+				setBackground(null);
+				setBorder(null);
+			}
+		};
+		
+		DefaultCaret caret = new DefaultCaret() {
+			{
+				setBlinkRate(600);
+				setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE);
+			}
+			@Override
+			public void focusLost( FocusEvent e ) {
+			
+			}
+		};
+		
+		textfield.setCaret( caret );
+		textfield.setHorizontalAlignment( SwingConstants.RIGHT );
+		textfield.setFont( font );
+		add( textfield, gbc ); 
 			
 		gbc.gridy = 1;
-		JLabel result = new JLabel(STANBY);                     
+		result = new JLabel(" "); 		
 		result.setHorizontalAlignment( SwingConstants.RIGHT );
 		result.setFont( font );
 		add( result, gbc );
 
 		gbc.gridy = 2;		
 		gbc.gridwidth = 1;
+		
+		textfield.addKeyListener( new KeyAdapter() {
+			@Override
+			public void keyReleased( KeyEvent event ) {
+			
+				try {
+					Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
+					result.setText(calculator.compute( content ));
+				} catch( Exception e ) {
+					result.setText(STANBY);
+				}	
+			}
+		});
+		
+		
 		
 		for ( String buttonstr : buttonStrs) {
 			JButton button = new JButton( buttonstr ) {
@@ -124,38 +165,56 @@ public class MainPanel extends JPanel {
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
 							case "©":
-								label.setText(STANBY);
+								textfield.setText(STANBY);
 							break;
 							case backspaceChar:
-								String content = label.getText().substring(0, label.getText().length() - 1 );
-								if ( content.equals("")) {
-									content = STANBY;
+								String content = textfield.getText();
+								StringBuilder newcontent = new StringBuilder();
+								int index = textfield.getCaretPosition() - 1;
+								for ( int i = 0; i < content.length(); i++) {
+									if ( i != index ) {
+										newcontent.append( content.charAt(i));
+									}
 								}
-								label.setText(content);
+								textfield.setText(newcontent.toString());
+								if ( index > -1 ) {
+									textfield.setCaretPosition(index);								
+								}
 							break;
 							default:
-								content = label.getText();
-								if ( content.equals(STANBY)) {
-									content = "";
-								}
-								label.setText( content + button.getText() );
+								write( button.getText().charAt(0) );
 							break;
 							
 						}
-						try {
-							Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( label.getText() );
-							result.setText(calculator.compute( content ));
-						} catch( Exception e ) {
-							result.setText(STANBY);
-						}
+						showResult();
 						
 				}
 			});
+			
 			add(  button , gbc );
 			if ( gbc.gridx++ == WIDTH ) {
 				gbc.gridx = 0;
 				gbc.gridy++;
 			}
+		}
+	}
+	boolean isParentesis( char ch )  {
+		return ch == '(' || ch == ')';
+	}
+	void write( char ch ) {
+		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) ) {
+			try {                      
+				textfield.getDocument().insertString( textfield.getCaretPosition(), String.valueOf(ch), null );			
+			} catch ( Exception e ) { }
+		}
+	}
+	void showResult() {
+		
+		try {
+			Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
+			result.setText(calculator.compute( content ));
+		} catch( Exception e ) {
+			result.setText(STANBY);
 		}
 	}
 	
