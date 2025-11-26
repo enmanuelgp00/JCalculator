@@ -21,8 +21,6 @@ public class CalculatorFrame extends JFrame {
 			
 			@Override
 			public void mousePressed( MouseEvent event) {
-				System.out.println(event.getX());         
-				System.out.println(event.getY());
 				initialPosMouse = event.getPoint();
 				
 			}
@@ -30,8 +28,7 @@ public class CalculatorFrame extends JFrame {
 			public void mouseDragged( MouseEvent event ) {
 				int x = ( event.getX() - initialPosMouse.x ) + CalculatorFrame.this.getLocation().x ;
 				int y = ( event.getY() - initialPosMouse.y ) + CalculatorFrame.this.getLocation().y ;
-				Point newPosWindow = new Point(x , y);
-				CalculatorFrame.this.setLocation(newPosWindow);
+				CalculatorFrame.this.setLocation( new Point(x , y));
 			}
 		};
 		addMouseMotionListener( mouseAdapter );
