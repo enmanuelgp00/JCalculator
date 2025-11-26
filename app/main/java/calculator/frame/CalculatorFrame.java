@@ -11,6 +11,7 @@ public class CalculatorFrame extends JFrame {
 		super();
 		//removeTitleBar
 		setUndecorated( true );
+		setLocationRelativeTo(null);
 		setTitle("JCalculator");
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		MainPanel mainPanel = new MainPanel(calculator);
