@@ -42,7 +42,7 @@ public class MainPanel extends JPanel {
 			"1","2","3","/","*",
 			"4","5","6","-","+",
 			"7","8","9","e","π",
-  backspaceChar,"0",".","=",cleanChar
+  backspaceChar,"0",".","ₓ",cleanChar
 		};
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -75,7 +75,8 @@ public class MainPanel extends JPanel {
 		inputField.setCaret( caret );
 		inputField.setHorizontalAlignment( SwingConstants.RIGHT );
 		inputField.setFont( outputFont );
-		add( inputField, gbc ); 
+		add( inputField, gbc );
+		inputField.setPreferredSize( inputField.getPreferredSize() ); 
 			
 		gbc.gridy = 1;
 		result = new JLabel(" "); 
@@ -83,6 +84,7 @@ public class MainPanel extends JPanel {
 		result.setHorizontalAlignment( SwingConstants.RIGHT );
 		result.setFont( resultFont );
 		add( result, gbc );
+		result.setPreferredSize( result.getPreferredSize() );
 
 		gbc.gridy = 2;		
 		gbc.gridwidth = 1;
@@ -93,7 +95,7 @@ public class MainPanel extends JPanel {
 			
 				try {
 					Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( inputField.getText() );
-					result.setText(calculator.compute( content ));
+					showResult();
 				} catch( Exception e ) {
 					result.setText(STANBY);
 				}	
@@ -123,9 +125,19 @@ public class MainPanel extends JPanel {
 					if ( getModel().isPressed()) {
 						g2.setColor( getBackground().darker());
 					} else if ( getModel().isRollover()) {
-						g2.setColor(getBackground().brighter());
+						g2.setColor(getBackground().brighter());	
 					} else {
-						g2.setColor(getBackground());
+						/*
+						if ( getText().equals(backspaceChar)) {
+							GradientPaint gradient = new GradientPaint(
+								0, 0, primaryColor,
+								getWidth(), getHeight(), secondaryColor.darker()
+							);
+							g2.setPaint(gradient);
+						} else {
+						*/
+							g2.setColor(getBackground());						
+						//}
 					}
 					g2.fillRoundRect( 0, 0, getWidth(), getHeight(), /*cornersRadius*/radiusCorners, radiusCorners);
 					
@@ -220,9 +232,8 @@ public class MainPanel extends JPanel {
 						
 				}
 			});
-			
-			if ( buttonstr.equals("=")) {
-				button.setBackground( secondaryColor );
+			if ( buttonstr.equals(backspaceChar)) {
+				button.setBackground(secondaryColor);
 			} else if ( Character.isDigit(buttonstr.charAt(0)) || buttonstr.equals(backspaceChar) || buttonstr.equals(".") ){
 				Color origincolor = button.getBackground();
 				Color newcolor = new Color( origincolor.getRed() + 31, origincolor.getGreen() + 31, origincolor.getBlue() + 37 );
