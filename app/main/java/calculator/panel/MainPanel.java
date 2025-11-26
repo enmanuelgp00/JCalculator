@@ -236,7 +236,7 @@ public class MainPanel extends JPanel {
 		
 		try {
 			Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
-			result.setText(  Calculator.removeDotIfJustZero(calculator.compute( content )));
+			result.setText( Calculator.removeDotIfJustZero(calculator.compute( content )));
 		} catch( Exception e ) {
 			result.setText(STANBY);
 		}
