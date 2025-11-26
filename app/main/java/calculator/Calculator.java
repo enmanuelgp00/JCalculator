@@ -104,10 +104,14 @@ public class Calculator {
 		try { 
 			double val = Double.parseDouble(num);
 			String s = String.format("%.3f", val );
+			System.out.println(s);
 			int rightZeroCount = 0;
 			for ( int i = s.length() - 1; i > 0; i-- ) {
 				if ( s.charAt(i) == '0' || s.charAt(i) == '.') {
 					rightZeroCount++;
+					if ( s.charAt(i) == '.') {
+						break;
+					}
 				} else {
 					break;
 				}

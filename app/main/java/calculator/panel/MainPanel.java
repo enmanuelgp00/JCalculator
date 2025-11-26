@@ -208,6 +208,9 @@ public class MainPanel extends JPanel {
 				}
 			});
 			
+			if ( buttonstr.equals("=")) {
+				button.setBackground( new Color(168, 168, 232));
+			}
 			add(  button , gbc );
 			if ( gbc.gridx++ == WIDTH ) {
 				gbc.gridx = 0;
