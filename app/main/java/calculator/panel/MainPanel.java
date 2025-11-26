@@ -16,6 +16,9 @@ public class MainPanel extends JPanel {
 	Calculator calculator;
 	JLabel result;
 	JTextField textfield;
+	Color backgroundColor = new Color(32, 32, 32 );
+	Color secondaryColor = new Color( 128, 128, 192 );
+	Color primaryColor = Color.WHITE;
 	int caretPosition;
 	int WIDTH = 4;
 	final String backspaceChar = "«";
@@ -25,7 +28,11 @@ public class MainPanel extends JPanel {
 	
 	public MainPanel( Calculator calculator ) {
 		super(  new GridBagLayout());
-		Font font = new Font("Courier New", Font.PLAIN, 24);
+		Dimension buttonDimension = new Dimension( 60, 50 );
+		setBackground( backgroundColor );
+		Font buttonFont = new Font("Courier New", Font.PLAIN, 24);
+		Font outputFont = buttonFont.deriveFont( buttonFont.getSize() + 10.0f);
+		Font resultFont = outputFont.deriveFont( Font.BOLD );
 		Border padding = BorderFactory.createEmptyBorder( 4, 4, 4, 4 );
 		setBorder( padding );
 		this.calculator = calculator;
@@ -47,7 +54,7 @@ public class MainPanel extends JPanel {
 		textfield = new JTextField() {
 			{
 				//setOpaque(false);
-				//setCaretColor( Color.BLACK );
+				setCaretColor( secondaryColor );
 				setBackground(null);
 				setBorder(null);
 			}
@@ -63,16 +70,17 @@ public class MainPanel extends JPanel {
 			
 			}
 		};
-		
+		textfield.setForeground( primaryColor );
 		textfield.setCaret( caret );
 		textfield.setHorizontalAlignment( SwingConstants.RIGHT );
-		textfield.setFont( font );
+		textfield.setFont( outputFont );
 		add( textfield, gbc ); 
 			
 		gbc.gridy = 1;
-		result = new JLabel(" "); 		
+		result = new JLabel(" "); 
+		result.setForeground( primaryColor );		
 		result.setHorizontalAlignment( SwingConstants.RIGHT );
-		result.setFont( font );
+		result.setFont( resultFont );
 		add( result, gbc );
 
 		gbc.gridy = 2;		
@@ -97,6 +105,9 @@ public class MainPanel extends JPanel {
 			JButton button = new JButton( buttonstr ) {
 				int radiusCorners = 7;
 				{
+					setForeground( primaryColor );
+					setBackground( backgroundColor );
+					setPreferredSize( buttonDimension );
 					setContentAreaFilled(false);
 					setFocusPainted(false);
 					setBorderPainted(false);
@@ -160,7 +171,7 @@ public class MainPanel extends JPanel {
 				}
 				*/
 			};
-			button.setFont( font );
+			button.setFont( buttonFont );
 			button.addActionListener( new ActionListener() {
 				@Override
 				public void actionPerformed( ActionEvent event ) {  
@@ -209,7 +220,15 @@ public class MainPanel extends JPanel {
 			});
 			
 			if ( buttonstr.equals("=")) {
-				button.setBackground( new Color(168, 168, 232));
+				button.setBackground( secondaryColor );
+			} else if ( Character.isDigit(buttonstr.charAt(0)) || buttonstr.equals(backspaceChar) || buttonstr.equals(".") ){
+				Color origincolor = button.getBackground();
+				Color newcolor = new Color( origincolor.getRed() + 37, origincolor.getGreen() + 37, origincolor.getBlue() + 37 );
+				button.setBackground( newcolor );
+			} else {
+				Color origincolor = button.getBackground();
+				Color newcolor = new Color( origincolor.getRed() + 16, origincolor.getGreen() + 16, origincolor.getBlue() + 16 );
+				button.setBackground( newcolor );
 			}
 			add(  button , gbc );
 			if ( gbc.gridx++ == WIDTH ) {
