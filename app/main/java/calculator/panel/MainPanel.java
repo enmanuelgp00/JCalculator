@@ -80,7 +80,7 @@ public class MainPanel extends JPanel {
 			
 		gbc.gridy = 1;
 		result = new JLabel(" "); 
-		result.setForeground( primaryColor );		
+		result.setForeground( secondaryColor );		
 		result.setHorizontalAlignment( SwingConstants.RIGHT );
 		result.setFont( resultFont );
 		add( result, gbc );
