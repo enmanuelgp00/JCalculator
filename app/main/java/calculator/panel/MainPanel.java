@@ -15,7 +15,10 @@ import calculator.Calculator;
 public class MainPanel extends JPanel {
 	Calculator calculator;
 	JLabel result;
-	JTextField textfield;
+	JTextField inputField;
+	Font buttonFont = new Font("Courier New", Font.PLAIN, 24);
+	Font outputFont = buttonFont.deriveFont( buttonFont.getSize() + 10.0f);
+	Font resultFont = outputFont.deriveFont( Font.BOLD );
 	Color backgroundColor = new Color(32, 32, 32 );
 	Color secondaryColor = new Color( 128, 128, 192 );
 	Color primaryColor = Color.WHITE;
@@ -30,9 +33,6 @@ public class MainPanel extends JPanel {
 		super(  new GridBagLayout());
 		Dimension buttonDimension = new Dimension( 60, 50 );
 		setBackground( backgroundColor );
-		Font buttonFont = new Font("Courier New", Font.PLAIN, 24);
-		Font outputFont = buttonFont.deriveFont( buttonFont.getSize() + 10.0f);
-		Font resultFont = outputFont.deriveFont( Font.BOLD );
 		Border padding = BorderFactory.createEmptyBorder( 4, 4, 4, 4 );
 		setBorder( padding );
 		this.calculator = calculator;
@@ -46,18 +46,19 @@ public class MainPanel extends JPanel {
 		};
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets( 2, 2, 2, 2 );
+		gbc.insets = new Insets( 1, 1, 1, 1 );
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = WIDTH + 1;
-		textfield = new JTextField() {
+		inputField = new JTextField() {
 			{
 				//setOpaque(false);
 				setCaretColor( secondaryColor );
 				setBackground(null);
 				setBorder(null);
 			}
+			
 		};
 		
 		DefaultCaret caret = new DefaultCaret() {
@@ -70,11 +71,11 @@ public class MainPanel extends JPanel {
 			
 			}
 		};
-		textfield.setForeground( primaryColor );
-		textfield.setCaret( caret );
-		textfield.setHorizontalAlignment( SwingConstants.RIGHT );
-		textfield.setFont( outputFont );
-		add( textfield, gbc ); 
+		inputField.setForeground( primaryColor );
+		inputField.setCaret( caret );
+		inputField.setHorizontalAlignment( SwingConstants.RIGHT );
+		inputField.setFont( outputFont );
+		add( inputField, gbc ); 
 			
 		gbc.gridy = 1;
 		result = new JLabel(" "); 
@@ -86,12 +87,12 @@ public class MainPanel extends JPanel {
 		gbc.gridy = 2;		
 		gbc.gridwidth = 1;
 		
-		textfield.addKeyListener( new KeyAdapter() {
+		inputField.addKeyListener( new KeyAdapter() {
 			@Override
 			public void keyReleased( KeyEvent event ) {
 			
 				try {
-					Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
+					Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( inputField.getText() );
 					result.setText(calculator.compute( content ));
 				} catch( Exception e ) {
 					result.setText(STANBY);
@@ -177,14 +178,14 @@ public class MainPanel extends JPanel {
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
 							case cleanChar:
-								textfield.setText("");
+								inputField.setText("");
 							break;
 							case backspaceChar:
-								String content = textfield.getText();
+								String content = inputField.getText();
 								StringBuilder newcontent = new StringBuilder();
-								int index = textfield.getCaretPosition() - 1;
-								int start = textfield.getSelectionStart();
-								int end = textfield.getSelectionEnd();
+								int index = inputField.getCaretPosition() - 1;
+								int start = inputField.getSelectionStart();
+								int end = inputField.getSelectionEnd();
 								
 								for ( int i = 0; i < content.length(); i++) {
 									if ( start != end ) {
@@ -197,15 +198,16 @@ public class MainPanel extends JPanel {
 										}
 									}
 								}
-								textfield.setText(newcontent.toString());
+								adjustTextInputInside( newcontent.toString(), inputField.getFont());
+								inputField.setText(newcontent.toString());
 								if ( start != end ) {
 									if ( start > -1 ) {
-										textfield.setCaretPosition( start );									
+										inputField.setCaretPosition( start );									
 									}
 								} else {
 
 									if ( index > -1 ) {
-										textfield.setCaretPosition(index);								
+										inputField.setCaretPosition(index);								
 									}								
 								}
 							break;
@@ -223,7 +225,7 @@ public class MainPanel extends JPanel {
 				button.setBackground( secondaryColor );
 			} else if ( Character.isDigit(buttonstr.charAt(0)) || buttonstr.equals(backspaceChar) || buttonstr.equals(".") ){
 				Color origincolor = button.getBackground();
-				Color newcolor = new Color( origincolor.getRed() + 37, origincolor.getGreen() + 37, origincolor.getBlue() + 37 );
+				Color newcolor = new Color( origincolor.getRed() + 31, origincolor.getGreen() + 31, origincolor.getBlue() + 37 );
 				button.setBackground( newcolor );
 			} else {
 				Color origincolor = button.getBackground();
@@ -243,18 +245,42 @@ public class MainPanel extends JPanel {
 	void write( char ch ) {
 		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) || ch == '.' || Calculator.isConstantChar( ch )) {
 			try {
-				if ( textfield.getSelectionStart() != textfield.getSelectionEnd() ) {
-					textfield.replaceSelection( String.valueOf(ch));
+				
+				
+				if ( inputField.getSelectionStart() != inputField.getSelectionEnd() ) {
+					
+					inputField.replaceSelection( String.valueOf(ch) );
 				} else {
-					textfield.getDocument().insertString( textfield.getCaretPosition(), String.valueOf(ch), null );							
+					adjustTextInputInside( inputField.getText() + String.valueOf(ch), inputField.getFont());
+					inputField.getDocument().insertString( inputField.getCaretPosition(), String.valueOf(ch), null );							
 				}
 			} catch ( Exception e ) { }
 		}
 	}
+	
+	void adjustTextInputInside( String text, Font fontTest ) {
+		FontMetrics fontMetrics = inputField.getFontMetrics( fontTest );
+		int textWidth = fontMetrics.stringWidth( text );
+		int fieldWidth = inputField.getWidth();
+		if ( textWidth >= fieldWidth ) {  
+			adjustTextInputInside( text, fontTest.deriveFont( fontTest.getSize() - 5.0f ) );
+		}  else  {
+			Font newtestf = fontTest.deriveFont( fontTest.getSize() + 5.0f );
+			fontMetrics = inputField.getFontMetrics( newtestf );
+			textWidth = fontMetrics.stringWidth( text );
+			
+			if ( textWidth < fieldWidth && newtestf.getSize() < outputFont.getSize()) {
+				adjustTextInputInside( text, newtestf );
+			} else {
+				inputField.setFont(fontTest);				
+			}
+		} 
+	}
+	
 	void showResult() {
 		
 		try {
-			Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( textfield.getText() );
+			Calculator.Evaluation.Content content = new Calculator.Evaluation.Content( inputField.getText() );
 			result.setText( Calculator.removeDotIfJustZero(calculator.compute( content )));
 		} catch( Exception e ) {
 			result.setText(STANBY);
