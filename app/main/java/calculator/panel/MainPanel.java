@@ -20,8 +20,9 @@ public class MainPanel extends JPanel {
 	Font outputFont = buttonFont.deriveFont( buttonFont.getSize() + 10.0f);
 	Font resultFont = outputFont.deriveFont( Font.BOLD );
 	Color backgroundColor = new Color(32, 32, 32 );
-	Color secondaryColor = new Color( 128, 128, 192 );
 	Color primaryColor = Color.WHITE;
+	Color secondaryColor = new Color( 255, 128, 192);                    
+	Color ternaryColor = new Color( 128, 128, 192 );//(233, 22, 181);
 	int caretPosition;
 	int WIDTH = 4;
 	final String backspaceChar = "«";
@@ -114,7 +115,7 @@ public class MainPanel extends JPanel {
 					setContentAreaFilled(false);
 					setFocusPainted(false);
 					setBorderPainted(false);
-					setOpaque(false);
+					setOpaque(false); // allow color change for g2
 				}
 				@Override
 				public void paintComponent( Graphics g ) {
@@ -232,7 +233,10 @@ public class MainPanel extends JPanel {
 						
 				}
 			});
-			if ( buttonstr.equals(backspaceChar)) {
+			if ( buttonstr.equals(cleanChar)) {   
+				button.setBackground(ternaryColor);
+			
+			} else if ( buttonstr.equals(backspaceChar)) {
 				button.setBackground(secondaryColor);
 			} else if ( Character.isDigit(buttonstr.charAt(0)) || buttonstr.equals(backspaceChar) || buttonstr.equals(".") ){
 				Color origincolor = button.getBackground();
