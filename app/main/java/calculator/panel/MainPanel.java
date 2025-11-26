@@ -17,8 +17,9 @@ public class MainPanel extends JPanel {
 	JLabel result;
 	JTextField textfield;
 	int caretPosition;
-	int WIDTH = 3;
+	int WIDTH = 4;
 	final String backspaceChar = "«";
+	final String cleanChar = "C";
 	final String STANBY = " ";
 	
 	
@@ -30,11 +31,11 @@ public class MainPanel extends JPanel {
 		this.calculator = calculator;
 		
 		String[] buttonStrs = new String[] {
-			"(",")","√","^",
-			"1","2","3","*",
-			"4","5","6","/",
-			"7","8","9","-",
-			backspaceChar,"0",".","+"
+			"(",")","%","√","^",
+			"1","2","3","/","*",
+			"4","5","6","-","+",
+			"7","8","9","e","π",
+  backspaceChar,"0",".","=",cleanChar
 		};
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -164,6 +165,9 @@ public class MainPanel extends JPanel {
 				@Override
 				public void actionPerformed( ActionEvent event ) {  
 						switch( button.getText() ) {
+							case cleanChar:
+								textfield.setText("");
+							break;
 							case backspaceChar:
 								String content = textfield.getText();
 								StringBuilder newcontent = new StringBuilder();
@@ -215,7 +219,7 @@ public class MainPanel extends JPanel {
 		return ch == '(' || ch == ')';
 	}
 	void write( char ch ) {
-		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) || ch == '.') {
+		if ( Character.isDigit(ch) || Calculator.isOperator(ch) ||  isParentesis( ch ) || ch == '.' || Calculator.isConstantChar( ch )) {
 			try {
 				if ( textfield.getSelectionStart() != textfield.getSelectionEnd() ) {
 					textfield.replaceSelection( String.valueOf(ch));

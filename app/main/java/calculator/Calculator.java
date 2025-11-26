@@ -9,6 +9,12 @@ import java.util.Scanner;
 public class Calculator {
 	String input;
 	Evaluation.Content evaluationInput;
+	static Constant[] CONSTANTS = new Constant[] {
+		new Constant('π', Math.PI ),
+		new Constant('e', Math.E )
+		
+	};
+	
 	static Operator[] OPERATORS = new Operator[] {
 		new Operator('√') {
 			
@@ -55,6 +61,13 @@ public class Calculator {
 			double evaluate() {
 				
 				return getParams()[0] / getParams()[1];
+			}
+		},
+		new Operator('%') {
+			@Override
+			double evaluate() {
+				
+				return getParams()[0] % getParams()[1];
 			}
 		},
 		new Operator('-') {
@@ -141,18 +154,18 @@ public class Calculator {
 				String symbol = String.valueOf(op.symbol);
 				for ( int i = 0; i < input.values.size(); i++ ) {
 					if ( symbol.equals(input.values.get(i)) ) {
-						try {
-						
+						try {        											
 							op.setParams(
 								Double.parseDouble(input.values.get(i - 1)), 
-								Double.parseDouble(input.values.get(i + 1)));
+								Double.parseDouble(input.values.get(i + 1))
+							);
+							
 							input.values.set(i - 1, String.valueOf(op.evaluate()));
 							input.values.remove(i);                
 							input.values.remove(i);
 							return input;
-						} catch( Exception e ) {
-							
-						}
+						} catch ( Exception e ) {}
+											
 					}
 				}
 			}
@@ -265,13 +278,21 @@ public class Calculator {
 					}              
 				}
 				
-				if ( Character.isDigit(ch) || ch == '.') {
+				if ( Character.isDigit(ch) || ch == '.' ) {
 					token.append(ch);                     
 					if ( i == input.length() - 1 ) {
 						values.add(token.toString());
 					}
 					
-				} else if ( isOperator(ch) ) {
+				} else if ( Calculator.isConstantChar(ch)) {
+					if ( token.length() > 0 ) {
+						values.add(token.toString());
+					}
+					token.setLength(0);
+					values.add("(");
+					values.add(String.valueOf(Calculator.getConstant(ch)));	
+					values.add(")");
+				} else if ( isOperator(ch)) {
 					if ( i == input.length() - 1 ) {
 						throw new Exception() { };
 					}  else {
@@ -279,12 +300,13 @@ public class Calculator {
 							try {
 								Double.parseDouble( token.toString() );
 								values.add(token.toString()); 
-							} catch( Exception e ) {
-							}
+							} catch( Exception e ) {}
 							
 							token.setLength(0);
 						}
+						
 						if ( !isOperator(values.getLast().charAt(0))) {	
+							
 							values.add(String.valueOf(ch));						
 						} else { 
 							throw new Exception() { };
@@ -362,8 +384,33 @@ public class Calculator {
 		abstract double evaluate();
 		
 	}
+	static private class Constant {
+		final char name;
+		final double value;
+		
+		Constant( char name, double value ) {
+			  this.name = name;
+			  this.value = value;
+		}
+	}
 	
+	public static double getConstant( char ch ) {
+		for ( Constant c : CONSTANTS ) {
+			if (c.name == ch ) {
+				return c.value;
+			}
+		}
+		return 0;
+	}
 	
+	public static boolean isConstantChar( char ch )  {
+		for ( Constant c : CONSTANTS ) {
+			if ( ch == c.name ) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public static void main( String[] args ) {
 		new CalculatorFrame( new Calculator() );
